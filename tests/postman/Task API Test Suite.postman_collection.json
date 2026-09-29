@@ -1,0 +1,571 @@
+{
+  "info": {
+    "_postman_id": "748a8dbe-8653-4edc-994d-7e79957c7f2d",
+    "name": "Task API Test Suite",
+    "description": "# 🚀 Get started here\n\nThis template guides you through CRUD operations (GET, POST, PUT, DELETE), variables, and tests.\n\n## 🔖 **How to use this template**\n\n#### **Step 1: Send requests**\n\nRESTful APIs allow you to perform CRUD operations using the POST, GET, PUT, and DELETE HTTP methods.\n\nThis collection contains each of these [request](https://learning.postman.com/docs/sending-requests/requests/) types. Open each request and click \"Send\" to see what happens.\n\n#### **Step 2: View responses**\n\nObserve the response tab for status code (200 OK), response time, and size.\n\n#### **Step 3: Send new Body data**\n\nUpdate or add new data in \"Body\" in the POST request. Typically, Body data is also used in PUT request.\n\n```\n{\n    \"name\": \"Add your name in the body\"\n}\n\n ```\n\n#### **Step 4: Update the variable**\n\nVariables enable you to store and reuse values in Postman. We have created a [variable](https://learning.postman.com/docs/sending-requests/variables/) called `base_url` with the sample request [https://postman-api-learner.glitch.me](https://postman-api-learner.glitch.me). Replace it with your API endpoint to customize this collection.\n\n#### **Step 5: Add tests in the \"Scripts\" tab**\n\nAdding tests to your requests can help you confirm that your API is working as expected. You can write test scripts in JavaScript and view the output in the \"Test Results\" tab.\n\n<img src=\"https://content.pstmn.io/fa30ea0a-373d-4545-a668-e7b283cca343/aW1hZ2UucG5n\" width=\"2162\" height=\"1530\">\n\n## 💪 Pro tips\n\n- Use folders to group related requests and organize the collection.\n    \n- Add more [scripts](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/) to verify if the API works as expected and execute workflows.\n    \n\n## 💡Related templates\n\n[API testing basics](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[API documentation](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9c28f47-1253-44af-a2f3-20dce4da1f18&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[Authorization methods](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=31a9a6ed-4cdf-4ced-984c-d12c9aec1c27&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "49621373",
+    "_collection_link": "https://go.postman.co/collection/49621373-748a8dbe-8653-4edc-994d-7e79957c7f2d?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "01. CRUD",
+      "item": [
+        {
+          "name": "POST /tasks - [Позитивный] Создание задачи с валидными данными",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Тест 1: Проверка кода ответа",
+                  "pm.test(\"Status code is 201 (Created)\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "// Тест 2: Проверка, что ответ — валидный JSON",
+                  "pm.test(\"Response is valid JSON\", function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "// Тест 3: Проверка наличия обязательных полей в ответе",
+                  "pm.test(\"Response contains required fields (id, title)\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('title');",
+                  "});",
+                  "",
+                  "// Тест 4: Проверка, что title совпадает с отправленным",
+                  "pm.test(\"Title in response matches request\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const requestBody = pm.request.body.raw ? JSON.parse(pm.request.body.raw) : {};",
+                  "    pm.expect(jsonData.title).to.eql(requestBody.title);",
+                  "});",
+                  "",
+                  "// Тест 5: Сохраняем ID задачи в переменную коллекции (для следующих тестов)",
+                  "pm.test(\"Save task ID to collection variable\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.id) {",
+                  "        pm.collectionVariables.set(\"createdTaskId\", jsonData.id);",
+                  "        console.log(\"✅ Saved task ID:\", jsonData.id);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\":\"Обзвон пациентов\",\n    \"recurrence_type\":\"daily\",\n    \"recurrence_config\":{\"every\":1}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/tasks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tasks"
+              ]
+            },
+            "description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /tasks - [Негативный] Создание без обязательного поля title",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"recurrence_type\":\"daily\",\n    \"recurrence_config\":{\"every\":1}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/tasks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /tasks проверка на 200 ok",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"recurrence_type\":\"daily\",\n    \"recurrence_config\":{\"every\":1}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/tasks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tasks"
+              ]
+            },
+            "description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /tasks/createdTaskId - [Позитивный] Поучение задачи с айди = 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "   pm.test(\"Status code is 200\", function () {",
+                  "       pm.response.to.have.status(200);",
+                  "   });",
+                  "   pm.test(\"Response contains task data\", function () {",
+                  "       const jsonData = pm.response.json();",
+                  "       pm.expect(jsonData).to.have.property('id');",
+                  "   });"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"recurrence_type\":\"daily\",\n    \"recurrence_config\":{\"every\":1}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/tasks/{{createdTaskId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tasks",
+                "{{createdTaskId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /tasks/1000- [Негативный]",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tasks/1000",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tasks",
+                "1000"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /task/createdTaskId [Позитивный] измнение задачи с айди из переменой",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Daily patient calls\",\n  \"description\": \"Call all patients from ward 3\",\n  \"status\": \"in_progress\",\n  \"recurrence_type\": \"daily\",\n  \"recurrence_config\": {\n    \"every\": 2\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/tasks/{{createdTaskId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tasks",
+                "{{createdTaskId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /tasks/1 [Позитивный] Удаление задачи с айди 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Successful DELETE request\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/tasks/{{createdTaskId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tasks",
+                "{{createdTaskId}}"
+              ]
+            },
+            "description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02. Generation",
+      "item": [
+        {
+          "name": "POST /tasks/generate?days=7 | 200 OK, создано 7 записей",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tasks/generate?days=7",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tasks",
+                "generate"
+              ],
+              "query": [
+                {
+                  "key": "days",
+                  "value": "7"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /tasks/generate?days=0 | 400 Bad Request",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tasks/generate?days=0",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tasks",
+                "generate"
+              ],
+              "query": [
+                {
+                  "key": "days",
+                  "value": "0"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "OST /tasks/generate?days=abc | 400 Bad Request",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tasks/generate?days=abc",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tasks",
+                "generate"
+              ],
+              "query": [
+                {
+                  "key": "days",
+                  "value": "abc"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03. Integration",
+      "item": [
+        {
+          "name": "Создание запроса для задачи",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Save task ID\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"cascadeTaskId\", jsonData.id);",
+                  "    console.log(\"✅ Created task ID:\", jsonData.id);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Cascade Test Task\",\n  \"description\": \"Task for testing CASCADE delete\",\n  \"recurrence_type\": \"daily\",\n  \"recurrence_config\": {\"every\": 1}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/tasks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Генерация 5 экз /tasks/generate?days=5",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"task_id\": {{cascadeTaskId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/tasks/generate?days=5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tasks",
+                "generate"
+              ],
+              "query": [
+                {
+                  "key": "days",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Проверка что экземпляры существуют /tasks/instances?from=2026-01-01&to=2026-12-31",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tasks/instances?from=2026-01-01&to=2026-12-31",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tasks",
+                "instances"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2026-01-01"
+                },
+                {
+                  "key": "to",
+                  "value": "2026-12-31"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Удаление задачи /tasks/{{cascadeTaskId}}",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tasks/{{cascadeTaskId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tasks",
+                "{{cascadeTaskId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Проверка удаления /tasks/instances?from=2026-01-01&to=2026-12-31",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tasks/instances?from=2026-01-01&to=2026-12-31",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tasks",
+                "instances"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2026-01-01"
+                },
+                {
+                  "key": "to",
+                  "value": "2026-12-31"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "id",
+      "value": "1"
+    },
+    {
+      "key": "base_url",
+      "value": "https://template.postman-echo.com"
+    },
+    {
+      "key": "createdTaskId",
+      "value": ""
+    },
+    {
+      "key": "cascadeTaskId",
+      "value": ""
+    }
+  ]
+}
